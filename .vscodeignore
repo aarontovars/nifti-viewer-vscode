@@ -1,0 +1,11 @@
+.vscode/**
+src/**
+viewer/**
+node_modules/**
+*.ts
+tsconfig.json
+build.mjs
+.viewer/**
+.gitignore
+.vsce-pat
+*.vsix

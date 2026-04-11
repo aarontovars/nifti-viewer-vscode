@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "name": "QC Validation",
+  "description": "Review pre-validation lesion candidates: baseline vs follow-up with classified lesions",
+  "viewer": {
+    "view": "multiplanar",
+    "showOverlay": true,
+    "alpha": 0.6
+  },
+  "panels": [
+    {
+      "title": "Baseline FLAIR",
+      "image": "base_preproc_syn.nii.gz"
+    },
+    {
+      "title": "Follow-up + Lesion candidates",
+      "image": "fwup_preproc_syn.nii.gz",
+      "overlay": "lesion_numbered.nii.gz"
+    }
+  ],
+  "findings": "lesion_numbered_clf.json"
+}

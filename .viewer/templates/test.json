@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "name": "Test Template",
+  "description": "FLAIR + lesion overlay side by side",
+  "viewer": {
+    "view": "axial",
+    "crosshairShow": true,
+    "crosshairColor": "#00ff00"
+  },
+  "panels": [
+    {
+      "title": "FLAIR",
+      "image": "base_flair.nii.gz",
+      "imageCmap": "gray"
+    },
+    {
+      "title": "FLAIR + Lesions",
+      "image": "base_flair.nii.gz",
+      "imageCmap": "gray",
+      "overlay": "lesion_numbered.nii.gz",
+      "overlayCmap": "rainbow"
+    }
+  ],
+  "grid": [[0, 1]]
+}

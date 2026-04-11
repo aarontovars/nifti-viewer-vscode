@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "name": "QC Lesions",
+  "description": "Baseline and follow-up N4 with lesion overlay on follow-up",
+  "viewer": {
+    "view": "multiplanar"
+  },
+  "panels": [
+    {
+      "title": "Baseline",
+      "image": "base_preproc_n4.nii.gz"
+    },
+    {
+      "title": "Follow-up + Lesions",
+      "image": "fwup_preproc_n4.nii.gz",
+      "overlay": "lesion_numbered.nii.gz"
+    }
+  ],
+  "findings": "lesion_numbered_clf.json"
+}

@@ -1,0 +1,83 @@
+{
+  "name": "nifti-viewer-vscode",
+  "displayName": "NIfTI Viewer",
+  "description": "View NIfTI (.nii, .nii.gz) neuroimaging files directly in VS Code",
+  "version": "0.3.5",
+  "publisher": "atovar",
+  "icon": "icon.png",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tensormedical/nifti-viewer-vscode"
+  },
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": ["Visualization", "Data Science", "Other"],
+  "keywords": ["nifti", "neuroimaging", "medical imaging", "brain", "MRI", "segmentation", "nii", "nii.gz", "radiology"],
+  "galleryBanner": {
+    "color": "#1a1a2e",
+    "theme": "dark"
+  },
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "niftiViewer.applyTemplate",
+        "title": "NIfTI: Open with Template"
+      },
+      {
+        "command": "niftiViewer.generateTemplate",
+        "title": "NIfTI: Generate Template from Files"
+      },
+      {
+        "command": "niftiViewer.captureState",
+        "title": "NIfTI: Capture Viewer Screenshot"
+      },
+      {
+        "command": "niftiViewer.openFolderWithTemplate",
+        "title": "NIfTI: Open Folder with Template"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "niftiViewer.applyTemplate",
+          "when": "explorerResourceIsFolder",
+          "group": "navigation"
+        },
+        {
+          "command": "niftiViewer.generateTemplate",
+          "when": "explorerResourceIsFolder",
+          "group": "navigation"
+        }
+      ]
+    },
+    "customEditors": [
+      {
+        "viewType": "niftiViewer.editor",
+        "displayName": "NIfTI Viewer",
+        "selector": [
+          { "filenamePattern": "*.nii" },
+          { "filenamePattern": "*.nii.gz" }
+        ],
+        "priority": "default"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch"
+  },
+  "dependencies": {
+    "nifti-reader-js": "^0.6.8",
+    "pako": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.75.0",
+    "@types/pako": "^2.0.3",
+    "esbuild": "^0.17.19",
+    "typescript": "^5.0.0"
+  }
+}

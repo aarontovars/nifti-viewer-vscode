@@ -1,0 +1,205 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #000;
+  color: #ccc;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 13px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Menu bar — NiiVue style
+   ═══════════════════════════════════════════════════════════ */
+
+#menubar {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 2px;
+  background: #252530;
+  border-bottom: 1px solid #3a3a4a;
+  flex-shrink: 0;
+  user-select: none;
+  z-index: 100;
+}
+
+/* Top-level menu button */
+.mn {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.mn-trigger {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 10px;
+  height: 100%;
+  background: none;
+  border: none;
+  color: #bbc;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.mn-trigger:hover,
+.mn.open .mn-trigger {
+  background: #3a3a50;
+  color: #fff;
+}
+
+.mn-chev {
+  font-size: 9px;
+  opacity: 0.5;
+}
+
+/* Dropdown panel */
+.mn-drop {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 160px;
+  max-height: none;
+  overflow-y: visible;
+  background: #1e1e2e;
+  border: 1px solid #3a3a4a;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  z-index: 200;
+  padding: 4px 0;
+}
+
+.mn.open > .mn-drop {
+  display: block;
+}
+
+/* Dropdown item */
+.mn-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 14px;
+  font-size: 12px;
+  color: #bbc;
+  cursor: pointer;
+  white-space: nowrap;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+
+.mn-item:hover {
+  background: #3a3a58;
+  color: #fff;
+}
+
+.mn-item.mn-active {
+  color: #7af;
+}
+
+.mn-check {
+  width: 18px;
+  display: inline-block;
+  font-size: 11px;
+  color: #7af;
+}
+
+.mn-sep {
+  height: 1px;
+  background: #3a3a4a;
+  margin: 4px 8px;
+}
+
+.mn-slider-row {
+  display: flex;
+  align-items: center;
+  padding: 4px 14px;
+  gap: 8px;
+  font-size: 11px;
+  color: #bbc;
+}
+
+.mn-slider-row label {
+  min-width: 28px;
+  opacity: 0.7;
+}
+
+.mn-slider-row input[type="range"] {
+  flex: 1;
+  height: 3px;
+  accent-color: #7af;
+  cursor: pointer;
+}
+
+.mn-slider-row .mn-slider-val {
+  min-width: 40px;
+  text-align: right;
+  opacity: 0.6;
+  font-size: 10px;
+}
+
+/* Filename on right */
+.menubar-filename {
+  margin-left: auto;
+  padding-right: 10px;
+  font-size: 11px;
+  color: #667;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Viewer container
+   ═══════════════════════════════════════════════════════════ */
+
+#viewer-container {
+  flex: 1;
+  overflow: hidden;
+  background: #000;
+  position: relative;
+}
+
+#viewer-container canvas {
+  cursor: crosshair;
+}
+
+#viewer-container.drag-scroll canvas {
+  cursor: ns-resize;
+}
+
+/* Title inline editor */
+.title-edit-input {
+  position: absolute;
+  height: 18px;
+  padding: 0 4px;
+  font: bold 11px sans-serif;
+  color: #fff;
+  background: #1e1e2e;
+  border: 1px solid #7af;
+  outline: none;
+  text-align: center;
+  z-index: 50;
+  box-sizing: border-box;
+}
+
+#loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  font-size: 14px;
+  color: #556;
+}

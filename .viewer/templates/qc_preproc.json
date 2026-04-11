@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "name": "QC Preprocessing",
+  "description": "2x2 grid: N4 vs SyN, base vs follow-up, with prob and mask overlays",
+  "viewer": {
+    "view": "multiplanar"
+  },
+  "panels": [
+    {
+      "title": "Base N4 + Prob",
+      "image": "base_preproc_n4.nii.gz",
+      "overlay": "base_xsec_prob.nii.gz"
+    },
+    {
+      "title": "Base SyN + Mask",
+      "image": "base_preproc_syn.nii.gz",
+      "overlay": "base_xsec_mask.nii.gz"
+    },
+    {
+      "title": "Fwup N4 + Prob",
+      "image": "fwup_preproc_n4.nii.gz",
+      "overlay": "fwup_xsec_prob.nii.gz"
+    },
+    {
+      "title": "Fwup SyN + Mask",
+      "image": "fwup_preproc_syn.nii.gz",
+      "overlay": "fwup_xsec_mask.nii.gz"
+    }
+  ],
+  "grid": [[0, 1], [2, 3]]
+}
