@@ -11,6 +11,7 @@ Claude Code picks up project-level commands automatically when you open this fol
 | Command | Description |
 |---------|-------------|
 | `/viewer-look` | Claude inspects the current viewer and analyses what you see |
+| `/create-template` | Claude scans a folder, generates a template JSON, saves it and opens the viewer |
 | `/publish` | Step-by-step guide to publish the extension to the VS Code Marketplace |
 
 ---
@@ -32,6 +33,27 @@ Claude will automatically capture a screenshot of the viewer and tell you what i
 ```
 
 No manual screenshots. No copy-paste. Fully automated.
+
+---
+
+## `/create-template` — Generate a template from a folder
+
+Point Claude at any folder containing NIfTI files:
+
+```
+/create-template /data/patient_042
+/create-template /data/patient_042 — show FLAIR with lesion overlay side by side
+/create-template /data/patient_042 — 2x2 grid comparing two timepoints with masks
+```
+
+Claude will:
+1. Scan the folder for `.nii.gz` files
+2. Infer each file's role (anatomical, overlay, timepoint) from its name
+3. Draft a template JSON with sensible panel layout, colormaps, and grid
+4. Show you the draft and ask for changes
+5. Save it to `~/.viewer/templates/` and open the viewer
+
+**The whole thing takes about 10 seconds.** No manual JSON editing. No looking up colormap names. Claude handles it all.
 
 ---
 
