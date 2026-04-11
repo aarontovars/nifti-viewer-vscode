@@ -96,33 +96,84 @@ Full keyboard control — you rarely need to reach for the mouse:
 
 ## Claude Code Integration
 
-This extension has a built-in integration with [Claude Code](https://claude.ai/claude-code). See [CLAUDE.md](CLAUDE.md) for the full guide.
+This extension has a first-class integration with [Claude Code](https://claude.ai/claude-code) that goes far beyond a simple screenshot. Three slash commands turn Claude into a fully capable co-pilot for neuroimaging review. See [CLAUDE.md](CLAUDE.md) for the complete guide.
 
 ### `/viewer-look` — Ask Claude what it sees
 
-Open a NIfTI file in VS Code, then in Claude Code:
+Open any NIfTI file in VS Code, then in Claude Code:
 
 ```
 /viewer-look
 /viewer-look what lesions are visible at this position?
 /viewer-look is the overlay well-aligned with the anatomy?
+/viewer-look describe what you see in the axial and coronal panels
 ```
 
-Claude automatically captures a screenshot of the viewer and the structured state (panels, slices, overlays, labels) and analyses them — no manual screenshots, no copy-paste.
+Claude automatically captures a screenshot of the viewer **and** a structured state dump (panel titles, slice positions, overlay ranges, visible labels) and analyses everything together. No manual screenshots. No copy-paste. Zero interaction required.
+
+---
+
+### `/create-template` — Generate a template from any folder
+
+This is the most powerful skill. Point Claude at a folder and describe what you want:
+
+```
+/create-template /data/patient_042
+/create-template /data/patient_042 — show FLAIR with lesion overlay side by side
+/create-template /data/patient_042 — 2×2 grid comparing baseline and follow-up with masks
+/create-template /data/patient_042 — I want to review the probability maps
+```
+
+Claude will:
+1. Scan the folder for `.nii.gz` files
+2. Infer each file's role from its name — anatomical images, overlays, timepoints, probability maps
+3. Draft a template JSON with the right panel layout, colormaps, and grid arrangement
+4. Show you the draft and let you tweak it
+5. Save it to `~/.viewer/templates/` and open the viewer immediately
+
+**The whole thing takes under 10 seconds.** No manual JSON. No looking up colormap names. No figuring out grid syntax. Claude handles it all — and the result is a reusable template you can run on any subject.
+
+Example — Claude sees `fwup_preproc_n4.nii.gz`, `base_preproc_n4.nii.gz`, `lesion_numbered.nii.gz` and generates:
+
+```json
+{
+  "name": "Baseline vs Follow-up + Lesions",
+  "viewer": { "view": "axial", "alpha": 0.7 },
+  "panels": [
+    { "title": "Baseline", "image": "base_preproc_n4.nii.gz", "imageCmap": "gray" },
+    { "title": "Follow-up", "image": "fwup_preproc_n4.nii.gz", "imageCmap": "gray" },
+    { "title": "Baseline + Lesions", "image": "base_preproc_n4.nii.gz",
+      "overlay": "lesion_numbered.nii.gz", "overlayCmap": "rainbow", "overlayMode": "contour" },
+    { "title": "Follow-up + Lesions", "image": "fwup_preproc_n4.nii.gz",
+      "overlay": "lesion_numbered.nii.gz", "overlayCmap": "rainbow", "overlayMode": "contour" }
+  ],
+  "grid": [[0, 1], [2, 3]]
+}
+```
+
+Claude also handles edge cases automatically:
+- **Fallback arrays** when filenames vary across pipeline versions: `["fwup_n4_FLAIR.nii.gz", "fwup_FLAIR.nii.gz"]`
+- **Findings panel** wired up if a classification JSON exists in the folder
+- **Per-panel colormaps** matched to each file type
+
+---
 
 ### Fully agentic QC workflows
 
 Tell Claude:
-> "Open the patient at `/data/HOSP-042` with the lesion review template and tell me if the segmentation looks correct"
+> "Open patient HOSP-042 at `/data/HOSP-042` with a lesion review layout and tell me if the segmentation looks correct"
 
 Claude will:
-1. Write the open request to `/tmp/nifti-viewer-open.json`
-2. Wait for the viewer to load
-3. Trigger an automatic screenshot
-4. Read the PNG and state JSON
-5. Analyse and respond — all without you touching anything
+1. Run `/create-template /data/HOSP-042` to generate the layout
+2. Open the viewer via the URI protocol
+3. Wait for the viewer to load
+4. Run `/viewer-look` to capture and analyse the current state
+5. Respond with findings — all without you touching anything
 
-Claude can also **create templates on the fly**. Describe what you want to compare, and Claude generates the JSON, saves it to `~/.viewer/templates/`, and opens the viewer.
+Or even simpler:
+> "Create a template for the files in this folder and tell me what you see"
+
+Claude figures out the rest.
 
 ---
 
