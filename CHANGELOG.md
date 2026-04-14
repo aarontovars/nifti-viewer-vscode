@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.7
+
+- **Full panel restore after extension-host restart**: template panels now fully restore after a VS Code extension-host restart. The viewer saves `{folderPath, templateName}` via `setState()` after loading a template. On restart, the deserializer re-sets the webview HTML, waits for the `"ready"` message, re-resolves the template, and re-sends the NIfTI data — the viewer reloads exactly as it was. (v0.3.6 only re-tracked the panel but left the viewer blank, because `retainContextWhenHidden` does not preserve JS context across restarts.)
+
 ## 0.3.6
 
 - **Panel tracking after extension-host restart**: template panels now survive VS Code extension-host restarts. Previously, if the host restarted while a viewer was open, the extension lost its reference to the panel — capture requests would fail silently with "No NIfTI viewer is open" even though the panel was still visible. Fixed by registering a `WebviewPanelSerializer` that re-attaches tracking on restart; the viewer data is preserved unchanged.
