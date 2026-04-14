@@ -103,6 +103,32 @@ export function activate(context: vscode.ExtensionContext) {
   const controlInterval = setInterval(checkControlFiles, 500);
   context.subscriptions.push({ dispose: () => clearInterval(controlInterval) });
 
+  // ── Serializer: re-track template panels after extension-host restart ──
+  // With retainContextWhenHidden:true the webview JS survives a restart and
+  // still holds its NIfTI data.  We only need to re-register tracking so
+  // getTargetPanel() can find the panel again.
+  context.subscriptions.push(
+    vscode.window.registerWebviewPanelSerializer("niftiViewer.template", {
+      async deserializeWebviewPanel(panel: vscode.WebviewPanel, _state: unknown) {
+        activePanels.add(panel);
+        lastOpenedPanel = panel;
+        panel.onDidDispose(() => {
+          activePanels.delete(panel);
+          if (lastOpenedPanel === panel) lastOpenedPanel = null;
+        });
+        // Re-attach capture handler — the webview is already live with data
+        panel.webview.onDidReceiveMessage(async (msg) => {
+          if (msg.type === "capture-state-response") {
+            const b64 = (msg.screenshotBase64 as string).replace(/^data:image\/png;base64,/, "");
+            fs.writeFileSync(screenshotPath, Buffer.from(b64, "base64"));
+            fs.writeFileSync(statePath, JSON.stringify(msg.state, null, 2));
+            vscode.window.showInformationMessage(`Screenshot saved to ${screenshotPath}`);
+          }
+        });
+      },
+    })
+  );
+
   // ── Generate Template command ──────────────────────────────────
   context.subscriptions.push(
     vscode.commands.registerCommand(

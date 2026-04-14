@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.6
+
+- **Panel tracking after extension-host restart**: template panels now survive VS Code extension-host restarts. Previously, if the host restarted while a viewer was open, the extension lost its reference to the panel — capture requests would fail silently with "No NIfTI viewer is open" even though the panel was still visible. Fixed by registering a `WebviewPanelSerializer` that re-attaches tracking on restart; the viewer data is preserved unchanged.
+
 ## 0.3.5
 
 - **Overlay threshold**: voxels with values outside [min, max] are now fully transparent (previously clamped to colormap edge instead of hidden)

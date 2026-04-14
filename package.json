@@ -2,7 +2,7 @@
   "name": "nifti-viewer-vscode",
   "displayName": "NIfTI Viewer",
   "description": "View NIfTI (.nii, .nii.gz) neuroimaging files directly in VS Code",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "publisher": "atovar",
   "icon": "icon.png",
   "license": "MIT",
