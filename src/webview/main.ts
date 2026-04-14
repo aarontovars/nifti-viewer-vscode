@@ -226,6 +226,8 @@ function handleApplyTemplate(msg: {
     overlayMode?: "filled" | "contour";
   }>;
   grid?: number[][];
+  folderPath?: string;
+  templateName?: string;
 }): void {
   const container = document.getElementById("viewer-container")!;
   const menubar = document.getElementById("menubar")!;
@@ -338,6 +340,11 @@ function handleApplyTemplate(msg: {
 
       setupMenuBar(menubar);
       viewer.init();
+
+      // Save state for deserialization after extension-host restart
+      if (msg.folderPath && msg.templateName) {
+        vscode.setState({ folderPath: msg.folderPath, templateName: msg.templateName });
+      }
 
       // Build findings panel if data provided
       if (msg.findings) {

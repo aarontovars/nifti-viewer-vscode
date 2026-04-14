@@ -103,21 +103,53 @@ export function activate(context: vscode.ExtensionContext) {
   const controlInterval = setInterval(checkControlFiles, 500);
   context.subscriptions.push({ dispose: () => clearInterval(controlInterval) });
 
-  // ── Serializer: re-track template panels after extension-host restart ──
-  // With retainContextWhenHidden:true the webview JS survives a restart and
-  // still holds its NIfTI data.  We only need to re-register tracking so
-  // getTargetPanel() can find the panel again.
+  // ── Serializer: restore template panels after extension-host restart ──
+  // The webview JS context is destroyed on restart, so we must re-set the
+  // HTML, handle the "ready" message, and re-send the template data.
+  // The webview saves { folderPath, templateName } via vscode.setState()
+  // which VS Code passes back here as the `state` parameter.
   context.subscriptions.push(
     vscode.window.registerWebviewPanelSerializer("niftiViewer.template", {
-      async deserializeWebviewPanel(panel: vscode.WebviewPanel, _state: unknown) {
+      async deserializeWebviewPanel(panel: vscode.WebviewPanel, state: any) {
         activePanels.add(panel);
         lastOpenedPanel = panel;
         panel.onDidDispose(() => {
           activePanels.delete(panel);
           if (lastOpenedPanel === panel) lastOpenedPanel = null;
         });
-        // Re-attach capture handler — the webview is already live with data
+
+        // Re-set webview options and HTML so JS can initialize
+        panel.webview.options = {
+          enableScripts: true,
+          retainContextWhenHidden: true,
+          localResourceRoots: [
+            vscode.Uri.joinPath(context.extensionUri, "dist"),
+            vscode.Uri.joinPath(context.extensionUri, "src"),
+          ],
+        };
+        panel.webview.html = getWebviewHtml(
+          panel.webview,
+          context.extensionUri,
+          state?.templateName || "NIfTI Viewer"
+        );
+
         panel.webview.onDidReceiveMessage(async (msg) => {
+          if (msg.type === "ready" && state?.folderPath && state?.templateName) {
+            try {
+              const folderUri = vscode.Uri.file(state.folderPath);
+              const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri;
+              const templates = await discoverTemplates(workspaceFolder, folderUri);
+              const picked = templates.find(
+                (t) => t.name.toLowerCase() === state.templateName.toLowerCase()
+              );
+              if (picked) {
+                const template = await parseTemplate(picked.uri);
+                await sendTemplateData(panel, template, folderUri);
+              }
+            } catch (err: any) {
+              console.error(`[serializer] Failed to restore template: ${err.message}`);
+            }
+          }
           if (msg.type === "capture-state-response") {
             const b64 = (msg.screenshotBase64 as string).replace(/^data:image\/png;base64,/, "");
             fs.writeFileSync(screenshotPath, Buffer.from(b64, "base64"));
@@ -609,6 +641,8 @@ async function sendTemplateData(
     panels,
     grid: template.grid,
     findings,
+    folderPath: folderUri.fsPath,
+    templateName: template.name,
   });
 }
 
